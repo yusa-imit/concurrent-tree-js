@@ -1,4 +1,4 @@
-import Iterables from './Iterables';
+import Iterables from '../common/Iterables';
 
 export default class Iterator<T> implements Iterable<T> {
   private _arr: Array<T>;
