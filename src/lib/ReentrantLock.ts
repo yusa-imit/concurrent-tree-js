@@ -1,3 +1,12 @@
+/**
+ * Get ReentrantLock from
+ * https://github.com/GiviMAD/PromiseReentrantLock
+ *
+ * Partially forked
+ *
+ * @author GiviMad
+ */
+
 type ReentrantLockReleaser = () => void;
 interface ReentrantLockedChainItem {
   (): void;
@@ -6,7 +15,7 @@ interface ReentrantLockedChainItem {
 export class ReentrantLock {
   private current?: ReentrantLockedChainItem;
   private last?: ReentrantLockedChainItem;
-  public resolver?: null | Promise<ReentrantLockReleaser>;
+  public resolver: null | Promise<ReentrantLockReleaser> = null;
   private next = () => {
     if (this.current === this.last) {
       this.current = undefined;
