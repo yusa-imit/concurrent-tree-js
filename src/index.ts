@@ -1,6 +1,4 @@
-export const sum = (a: number, b: number) => {
-  if ('development' === process.env.NODE_ENV) {
-    console.log('boop');
-  }
-  return a + b;
-};
+import Iterator from "./lib/Iterator";
+
+const iterable = new Iterator<String>([])
+console.log(iterable[Symbol.iterator]);

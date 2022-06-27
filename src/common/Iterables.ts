@@ -18,9 +18,7 @@ export default class Iterables {
   }
   public static count(iterable: Iterable<any>): number {
     let count = 0;
-    for (const v of iterable) {
-      count++;
-    }
+    Iterables.toArray(iterable).forEach(()=>{count++});
     return count;
   }
 }

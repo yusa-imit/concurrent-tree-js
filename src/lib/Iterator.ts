@@ -9,3 +9,6 @@ export default class Iterator<T> implements Iterable<T> {
     return this._arr[Symbol.iterator]();
   }
 }
+
+const iterable = new Iterator<String>([])
+console.log(iterable[Symbol.iterator]);
