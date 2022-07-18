@@ -15,7 +15,6 @@ interface ReentrantLockedChainItem {
 export class ReentrantLock {
   private current?: ReentrantLockedChainItem;
   private last?: ReentrantLockedChainItem;
-  public resolver: null | Promise<ReentrantLockReleaser> = null;
   private next = () => {
     if (this.current === this.last) {
       this.current = undefined;
@@ -24,12 +23,12 @@ export class ReentrantLock {
       this.current.next();
     }
   };
-  public acquire(): void {
+  public acquire(): Promise<ReentrantLockReleaser> {
     if (!this.last) {
       this.current = this.last = () => null;
-      this.resolver = Promise.resolve(this.next);
+      return Promise.resolve(this.next);
     } else {
-      this.resolver = new Promise((resolve, reject) => {
+      return new Promise((resolve, reject) => {
         const lockChainItem = () => {
           this.current = lockChainItem;
           resolve(this.next);
