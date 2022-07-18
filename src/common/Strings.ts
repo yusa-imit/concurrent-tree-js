@@ -1,5 +1,3 @@
-import AnyIterator from '../lib/AnyIterator';
-
 export namespace Strings {
   export function generateSuffixes(input: string): Iterable<string> {
     class itr implements IterableIterator<string> {
@@ -25,3 +23,26 @@ export namespace Strings {
     return;
   }
 }
+
+/**
+ * Template for iterator
+ */
+/*
+class itr implements IterableIterator<string> {
+      idx: number = 0;
+      _arr: string;
+      constructor(_a: string) {
+        this._arr = _a;
+      }
+      next(): IteratorResult<string, any> {
+        if (!this.hasNext()) return { value: undefined, done: true };
+        return { value: , done: false };
+      }
+      hasNext(): boolean {
+        return ; // edit here
+      }
+      [Symbol.iterator]() {
+        return this;
+      }
+    }
+*/
