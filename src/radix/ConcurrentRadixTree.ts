@@ -56,7 +56,7 @@ export class ConcurrentRadixTree<T> implements RadixTree<T>, PrettyPrintable {
           searchResult.nodeFound.getIncomingEdge(),
           searchResult.charsMatchedInNodeFound
         );
-        const newPrefix = Strings.concatenate(prefix, searchResult.nodeFound);
+        prefix = Strings.concatenate(prefix, edgeSuffix);
         return this.getDescendantKeys(prefix, searchResult.nodeFound);
       }
       default:
@@ -74,7 +74,7 @@ export class ConcurrentRadixTree<T> implements RadixTree<T>, PrettyPrintable {
           searchResult.nodeFound.getIncomingEdge(),
           searchResult.charsMatchedInNodeFound
         );
-        const newPrefix = Strings.concatenate(prefix, edgeSuffix);
+        prefix = Strings.concatenate(prefix, edgeSuffix);
         return this.getDescendantValues(prefix, searchResult.nodeFound);
       }
       default:
@@ -82,7 +82,7 @@ export class ConcurrentRadixTree<T> implements RadixTree<T>, PrettyPrintable {
     }
   }
   getKeyValuePairsForKeysStartingWith(
-    perfix: string
+    prefix: string
   ): Iterable<KeyValuePair<T>> {
     const searchResult: SearchResult = this.searchTree(prefix);
     const classification = searchResult.classification;
@@ -94,7 +94,7 @@ export class ConcurrentRadixTree<T> implements RadixTree<T>, PrettyPrintable {
           searchResult.nodeFound.getIncomingEdge(),
           searchResult.charsMatchedInNodeFound
         );
-        const newPrefix = Strings.concatenate(prefix, searchResult.nodeFound);
+        prefix = Strings.concatenate(prefix, edgeSuffix);
         return this.getDescendantKeyValuePairs(prefix, searchResult.nodeFound);
       }
       default:
@@ -195,18 +195,136 @@ export class ConcurrentRadixTree<T> implements RadixTree<T>, PrettyPrintable {
     }
   }
   getClosestKeys(candidate: string): Iterable<string> {
-    throw new Error('Method not implemented.');
+    const searchResult: SearchResult = this.searchTree(candidate);
+    const classification = searchResult.classification;
+    switch (classification) {
+      case SearchResult.Classification.EXACT_MATCH:
+        return this.getDescendantKeys(candidate, searchResult.nodeFound);
+      case SearchResult.Classification.KEY_ENDS_MID_EDGE: {
+        const edgeSuffix = Strings.getSuffix(
+          searchResult.nodeFound.getIncomingEdge(),
+          searchResult.charsMatchedInNodeFound
+        );
+        candidate = Strings.concatenate(candidate, edgeSuffix);
+        return this.getDescendantKeys(candidate, searchResult.nodeFound);
+      }
+      case SearchResult.Classification.INCOMPLETE_MATCH_TO_END_OF_EDGE: {
+        if (searchResult.charsMatched === 0) {
+          break;
+        }
+        const keyOfNodeFound = Strings.getPrefix(
+          candidate,
+          searchResult.charsMatched
+        );
+        return this.getDescendantKeys(keyOfNodeFound, searchResult.nodeFound);
+      }
+      default:
+        return [];
+    }
   }
   getValuesForClosestKeys(candidate: string): Iterable<T> {
-    throw new Error('Method not implemented.');
+    const searchResult: SearchResult = this.searchTree(candidate);
+    const classification = searchResult.classification;
+    switch (classification) {
+      case SearchResult.Classification.EXACT_MATCH:
+        return this.getDescendantValues(candidate, searchResult.nodeFound);
+      case SearchResult.Classification.KEY_ENDS_MID_EDGE: {
+        const edgeSuffix = Strings.getSuffix(
+          searchResult.nodeFound.getIncomingEdge(),
+          searchResult.charsMatchedInNodeFound
+        );
+        candidate = Strings.concatenate(candidate, edgeSuffix);
+        return this.getDescendantValues(candidate, searchResult.nodeFound);
+      }
+      case SearchResult.Classification.INCOMPLETE_MATCH_TO_MIDDLE_OF_EDGE: {
+        const keyOfParentNode = Strings.getPrefix(
+          candidate,
+          searchResult.charsMatched - searchResult.charsMatchedInNodeFound
+        );
+        const keyOfNodeFound = Strings.concatenate(
+          keyOfParentNode,
+          searchResult.nodeFound.getIncomingEdge()
+        );
+        return this.getDescendantValues(keyOfNodeFound, searchResult.nodeFound);
+      }
+      case SearchResult.Classification.INCOMPLETE_MATCH_TO_END_OF_EDGE: {
+        if (searchResult.charsMatched === 0) {
+          break;
+        }
+        const keyOfNodeFound = Strings.getPrefix(
+          candidate,
+          searchResult.charsMatched
+        );
+        return this.getDescendantvalues(keyOfNodeFound, searchResult.nodeFound);
+      }
+      default:
+        return [];
+    }
   }
   getKeyValuePairsForClosestKeys(candidate: string): Iterable<KeyValuePair<T>> {
-    throw new Error('Method not implemented.');
+    const searchResult: SearchResult = this.searchTree(candidate);
+    const classification = searchResult.classification;
+    switch (classification) {
+      case SearchResult.Classification.EXACT_MATCH:
+        return this.getDescendantKeyValuePairs(
+          candidate,
+          searchResult.nodeFound
+        );
+      case SearchResult.Classification.KEY_ENDS_MID_EDGE: {
+        const edgeSuffix = Strings.getSuffix(
+          searchResult.nodeFound.getIncomingEdge(),
+          searchResult.charsMatchedInNodeFound
+        );
+        candidate = Strings.concatenate(candidate, edgeSuffix);
+        return this.getDescendantKeyValuePairs(
+          candidate,
+          searchResult.nodeFound
+        );
+      }
+      case SearchResult.Classification.INCOMPLETE_MATCH_TO_MIDDLE_OF_EDGE: {
+        const keyOfParentNode = Strings.getPrefix(
+          candidate,
+          searchResult.charsMatched - searchResult.charsMatchedInNodeFound
+        );
+        const keyOfNodeFound = Strings.concatenate(
+          keyOfParentNode,
+          searchResult.nodeFound.getIncomingEdge()
+        );
+        return this.getDescendantKeyValuePairs(
+          keyOfNodeFound,
+          searchResult.nodeFound
+        );
+      }
+      case SearchResult.Classification.INCOMPLETE_MATCH_TO_END_OF_EDGE: {
+        if (searchResult.charsMatched === 0) {
+          break;
+        }
+        const keyOfNodeFound = Strings.getPrefix(
+          candidate,
+          searchResult.charsMatched
+        );
+        return this.getDescendantKeyValuePairs(
+          keyOfNodeFound,
+          searchResult.nodeFound
+        );
+      }
+      default:
+        return [];
+    }
   }
   size(): number {
-    throw new Error('Method not implemented.');
+    const stack = [this.root];
+    let count = 0;
+    while (stack.length !== 0) {
+      const current: Node = stack.pop() as Node;
+      stack.push(...current.getOutgoingEdges());
+      if (current.getValue() !== null) {
+        count++;
+      }
+    }
+    return count;
   }
   getNode(): Node {
-    throw new Error('Method not implemented.');
+    return this.root;
   }
 }
