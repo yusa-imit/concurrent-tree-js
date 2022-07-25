@@ -2,6 +2,7 @@ import { Nullable } from '../../../lib/Nullable';
 import Node from '../Node';
 import NodeFactory from '../NodeFactory';
 import { NodeUtil } from '../util/NodeUtil';
+import { StringNodeDefault } from './string/StringNodeDefault';
 
 export class DefaultStringNodeFactory implements NodeFactory<string> {
   public createNode(
