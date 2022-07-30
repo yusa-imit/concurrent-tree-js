@@ -6,6 +6,8 @@ import { StringNodeDefault } from './string/StringNodeDefault';
 import { StringNodeLeafNullValue } from './string/StringNodeLeafNullValue';
 import { StringNodeLeafVoidValue } from './string/StringNodeLeafVoidValue';
 import { StringNodeLeafWithValue } from './string/StringNodeLeafWithValue';
+import { StringNodeNonLeafNullValue } from './string/StringNodeNonLeafNullValue';
+import { StringNodeNonLeafVoidValue } from './string/StringNodeNonLeafVoidValue';
 
 export class DefaultStringNodeFactory implements NodeFactory<string> {
   public createNode(
