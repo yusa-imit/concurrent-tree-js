@@ -3,6 +3,9 @@ import Node from '../Node';
 import NodeFactory from '../NodeFactory';
 import { NodeUtil } from '../util/NodeUtil';
 import { StringNodeDefault } from './string/StringNodeDefault';
+import { StringNodeLeafNullValue } from './string/StringNodeLeafNullValue';
+import { StringNodeLeafVoidValue } from './string/StringNodeLeafVoidValue';
+import { StringNodeLeafWithValue } from './string/StringNodeLeafWithValue';
 
 export class DefaultStringNodeFactory implements NodeFactory<string> {
   public createNode(
@@ -27,7 +30,7 @@ export class DefaultStringNodeFactory implements NodeFactory<string> {
       } else if (value !== null) {
         return new StringNodeLeafWithValue(edgeCharacters, value);
       } else {
-        return new StringNodeLeafWithValue(edgeCharacters);
+        return new StringNodeLeafNullValue(edgeCharacters);
       }
     } else {
       if (value === '') {
