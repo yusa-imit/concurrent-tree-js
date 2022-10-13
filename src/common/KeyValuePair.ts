@@ -1,7 +1,7 @@
 export interface KeyValuePair<T> {
   getKey(): string;
   getValue(): T;
-  equals(value: T): boolean;
+  equals(object: Object): boolean;
   hashCode(): number;
   toString(): string;
 }

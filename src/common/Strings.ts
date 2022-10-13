@@ -1,5 +1,6 @@
+import { CustomIterator } from '../lib/CustomIterator';
 export namespace Strings {
-  export function generateSuffixes(input: string): Iterable<string> {
+  export function generateSuffixes(input: string): CustomIterator<string> {
     class itr implements IterableIterator<string> {
       idx: number = 0;
       _arr: string;

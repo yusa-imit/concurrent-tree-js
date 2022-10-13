@@ -1,3 +1,5 @@
+import { Nullable } from '../lib/Nullable';
+
 //type LazyIteratorState = "READY" | "NOT_READY" | "DONE" | "FAILED";
 enum LazyIteratorState {
   READY,
@@ -36,9 +38,9 @@ export abstract class LazyIterator<T> implements Iterator<T | null> {
     }
     return false;
   }
-  next(): IteratorResult<T | null> {
+  next(): IteratorResult<T | null, Nullable<T>> {
     if (!this.hasNext()) {
-      return { value: undefined, done: true };
+      return { value: null, done: true };
     }
     this.state = LazyIteratorState.NOT_READY;
     return { value: this.nextValue, done: false };
@@ -47,5 +49,5 @@ export abstract class LazyIterator<T> implements Iterator<T | null> {
     this.state = LazyIteratorState.DONE;
     return null;
   }
-  protected abstract computeNext(): T;
+  protected abstract computeNext(): Nullable<T>;
 }
