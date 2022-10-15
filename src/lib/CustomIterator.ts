@@ -1,3 +1,4 @@
-export interface CustomIterator<T> extends Iterator<T>, Iterable<T> {
+export interface CustomIterator<T> extends IterableIterator<T> {
   hasNext: () => boolean;
+  [Symbol.iterator]: () => CustomIterator<T>;
 }

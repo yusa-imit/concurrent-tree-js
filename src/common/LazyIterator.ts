@@ -1,4 +1,5 @@
 import { Nullable } from '../lib/Nullable';
+import { CustomIterator } from '../lib/CustomIterator';
 
 //type LazyIteratorState = "READY" | "NOT_READY" | "DONE" | "FAILED";
 enum LazyIteratorState {
@@ -7,7 +8,7 @@ enum LazyIteratorState {
   DONE,
   FAILED,
 }
-export abstract class LazyIterator<T> implements Iterator<T | null> {
+export abstract class LazyIterator<T> implements CustomIterator<T | null> {
   nextValue: T | null = null;
   state: LazyIteratorState = LazyIteratorState.NOT_READY;
   remove(): void {
@@ -50,4 +51,7 @@ export abstract class LazyIterator<T> implements Iterator<T | null> {
     return null;
   }
   protected abstract computeNext(): Nullable<T>;
+  [Symbol.iterator]() {
+    return this;
+  }
 }

@@ -1,7 +1,7 @@
-import { Nullable } from '../lib/Nullable';
 import { KeyValuePair } from '../common/KeyValuePair';
+import { Nullable } from '../lib/Nullable';
 
-export interface ReversedRadixTree<T> {
+export interface SuffixTree<T> {
   put(key: string, value: T): Promise<Nullable<T>>;
   putIfAbsent(key: string, value: T): Promise<Nullable<T>>;
   remove(key: string): Promise<boolean>;
@@ -11,5 +11,9 @@ export interface ReversedRadixTree<T> {
   getKeyValuePairsEndingWith(
     suffix: string
   ): Iterable<Nullable<KeyValuePair<T>>>;
-  size(): number;
+  getKeysContaining(fragment: string): Iterable<Nullable<string>>;
+  getValuesForKeysContaining(fragment: string): Iterable<Nullable<T>>;
+  getKeyValuePairsForKeysContaining(
+    fragment: string
+  ): Iterable<Nullable<KeyValuePair<T>>>;
 }

@@ -11,6 +11,10 @@ import { LazyIterator } from '../common/LazyIterator';
 import { NodeKeyPair } from '../lib/NodeKeyPair';
 import { CustomIterator } from '../lib/CustomIterator';
 import { KeyValuePairImpl } from '../lib/KeyValuePairImpl';
+import {
+  EmptySetCustomIterable,
+  EmptySetCustomIterableIterator,
+} from '../common/Empties';
 
 export class ConcurrentRadixTree<T> implements RadixTree<T>, PrettyPrintable {
   private nodeFactory: NodeFactory<T>;
@@ -72,7 +76,7 @@ export class ConcurrentRadixTree<T> implements RadixTree<T>, PrettyPrintable {
         return [];
     }
   }
-  getValuesForKeysStartingWith(prefix: string): Iterable<Nullable<T>> {
+  getValuesForKeysStartingWith(prefix: string): CustomIterator<Nullable<T>> {
     const searchResult: SearchResult = this.searchTree(prefix);
     const classification = searchResult.classification;
     switch (classification) {
@@ -87,7 +91,7 @@ export class ConcurrentRadixTree<T> implements RadixTree<T>, PrettyPrintable {
         return this.getDescendantValues(prefix, searchResult.nodeFound);
       }
       default:
-        return [];
+        return EmptySetCustomIterableIterator;
     }
   }
   getKeyValuePairsForKeysStartingWith(
@@ -564,7 +568,7 @@ export class ConcurrentRadixTree<T> implements RadixTree<T>, PrettyPrintable {
     }
     return new itr(startKey, startNode);
   }
-  protected static lazyTraverseDescendants(
+  static lazyTraverseDescendants(
     startKey: string,
     startNode: Node
   ): CustomIterator<Nullable<NodeKeyPair>> {
